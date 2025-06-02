@@ -1,3 +1,5 @@
+### My First MCP Server - Portfolio Manager
+
 ## Prerequisites
 1. Install uv package manager
 2. Download and Install Claude Desktop - https://claude.ai/download
@@ -20,12 +22,12 @@ source .venv/bin/activate
 
 #### Install requirements
 ```Shell
+#python3 -m pip install -r requirements.txt
 uv add -r requirements.txt
 ```
 
 ```Shell
-# deprecated pip and migrated to use uv
-#python3 -m pip install -r requirements.txt
+# Sync dependencies
 uv sync
 ```
 
