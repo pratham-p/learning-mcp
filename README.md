@@ -1,4 +1,4 @@
-### My First MCP Server - Portfolio Manager
+### My First MCP Server (Portfolio Manager) and Client.
 
 ## Prerequisites
 1. Install uv package manager
