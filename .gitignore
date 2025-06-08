@@ -10,4 +10,52 @@ wheels/
 # Virtual environments
 .venv
 
+# Environment variables
+.env
 
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+.history/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Test and coverage
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / pytest
+.pytest_cache/
+
+# Editor backups
+*~
+*.swp
+*.swo
+*.bak
+
+# Node.js (if any JS tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,6 +1,7 @@
 from datetime import date
-from mcp.server.fastmcp import FastMCP
+from fastmcp.server import FastMCP, Context
 from typing import List
+from mcp.types import SamplingMessage, TextContent
 
 # mock data to simulate my stock positions in my portfolio
 my_portfolio = {
@@ -65,6 +66,39 @@ def get_stock_position(stock_symbol: str) -> str:
             f"{stock_symbol} (Position {idx}): {position['shares']} shares at ${position['price_per_share']:.2f} per share, acquired on {position.get('date_acquired', 'unknown date')}."
         )
     return "\n".join(result)
+
+@mcp.tool()
+async def get_stock_position_llm(stock_symbol: str, ctx: Context) -> List[SamplingMessage]:
+    """
+    Get the current position(s) of a specific stock in the portfolio,
+    but ask the LLM to summarize or explain the position.
+    """
+    stock_symbol = stock_symbol.upper()
+    if stock_symbol not in my_portfolio:
+        user_message = f"Stock symbol '{stock_symbol}' not found in portfolio."
+    else:
+        positions = my_portfolio[stock_symbol]
+        details = []
+        for idx, position in enumerate(positions, 1):
+            details.append(
+                f"{stock_symbol} (Position {idx}): {position['shares']} shares at ${position['price_per_share']:.2f} per share, acquired on {position.get('date_acquired', 'unknown date')}."
+            )
+        user_message = "\n".join(details)
+    
+    # Build list of SamplingMessages to return
+    messages = [
+        SamplingMessage(
+            role="user",
+            content=TextContent(
+                type="text",
+                text=f"Details of stock position:\n{user_message}"
+            )
+        )
+    ]
+    
+    # define systemPrompt params
+    system_prompt = "You are a helpful financial assistant. Please summarize the stock position provided by the user in a concise and informative manner."
+    return await ctx.sample(messages, system_prompt=system_prompt)
 
 # Tool: Add stock to portfolio
 @mcp.tool()
@@ -134,6 +168,7 @@ def remove_stock(stock_symbol: str) -> str:
     return f"Removed all positions of {stock_symbol} from the portfolio."
 
 # Resource: Greeting
+# As of June 2025, Claude Desktop does not support dynamic resources, so this will not show up yet it as your client.
 @mcp.resource("greeting://{name}")
 def get_greeting(name: str) -> str:
     """Get a personalized greeting"""
