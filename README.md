@@ -47,8 +47,8 @@ or
 npx @modelcontextprotocol/inspector uv run ./portfolio-mcp-server/main.py
 ```
 
-### MCP Client
-MCP Client Uses OpenAI APIs for Chat Completions. 
+### Custom MCP Client
+This custom MCP Client Uses OpenAI APIs for Chat Completions. 
 We are using Sampling Handler to Request the client’s LLM to generate text based on provided messages. This is useful when the function needs to leverage the LLM’s capabilities to process data or generate responses.
 
 **Note:** Create `.env` file in the project and add `OPENAI_API_KEY=<add your key>`
