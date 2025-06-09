@@ -7,7 +7,6 @@ from fastmcp.client.sampling import SamplingMessage, SamplingParams, RequestCont
 # Load environment variables
 load_dotenv(find_dotenv())
 
-
 async def sampling_handler(
     messages: list[SamplingMessage],
     params: SamplingParams,
@@ -31,7 +30,7 @@ async def sampling_handler(
 
 async def main():
     
-    async with Client("./portfolio-mcp-server/main.py", sampling_handler=sampling_handler) as client:
+    async with Client("./my-mcp-server/main.py", sampling_handler=sampling_handler) as client:
         # Example: Call a tool that triggers LLM sampling
         result = await client.call_tool("get_stock_position_llm", {"stock_symbol": "AAPL"})
         

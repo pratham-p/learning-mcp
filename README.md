@@ -11,7 +11,7 @@
 ```Shell
 # deprecated pip and migrated to use uv
 #python3 -m venv .venv
-vu venv
+uv venv
 ```
 
 ### Activate Virtual Env
@@ -34,17 +34,17 @@ uv sync
 ### Run MCP and Install to Claude
 ```Shell
 #This installs MCP Server defined in main.py to Claude Config.
-uv run mcp install ./portfolio-mcp-server/main.py
+uv run mcp install ./my-mcp-server/main.py
 or
-mcp install ./portfolio-mcp-server/main.py
+mcp install ./my-mcp-server/main.py
 ```
 
 ### Debug MCP Server
 ```Shell
 # debug MCP server
-mcp dev ./portfolio-mcp-server/main.py
+mcp dev ./my-mcp-server/main.py
 or
-npx @modelcontextprotocol/inspector uv run ./portfolio-mcp-server/main.py
+npx @modelcontextprotocol/inspector uv run ./my-mcp-server/main.py
 ```
 
 ### Custom MCP Client

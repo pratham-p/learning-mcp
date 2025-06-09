@@ -1,5 +1,5 @@
 [project]
-name = "portfolio-mcp-server"
+name = "my-mcp-server"
 version = "0.1.0"
 description = "MCP server that manages my portfolio"
 readme = "README.md"
