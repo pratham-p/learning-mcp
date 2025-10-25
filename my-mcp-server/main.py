@@ -1,7 +1,9 @@
 from datetime import date
-from fastmcp.server import FastMCP, Context
-from typing import List
+from fastmcp.server.server import FastMCP
+from fastmcp.server.context import Context
+from typing import List, Optional
 from mcp.types import SamplingMessage, TextContent
+import requests
 from portfolio_manager.portfolio import (
     get_portfolio_value,
     get_all_stocks,
@@ -43,11 +45,15 @@ def get_stock_position_tool(stock_symbol: str) -> str:
 
 
 @mcp.tool()
-async def get_stock_position_llm(stock_symbol: str, ctx: Context) -> List[SamplingMessage]:
+async def get_stock_position_llm(stock_symbol: str, ctx: Context) -> str:
     """
     Get the current position(s) of a specific stock in the portfolio,
     and ask the LLM on client side to summarize or explain the position.
+    Args:
+        stock_symbol: The stock symbol to look up
+        ctx: The request context for sampling
     """
+
     positions = get_stock_position(stock_symbol)
 
     if not positions:
@@ -66,8 +72,32 @@ async def get_stock_position_llm(stock_symbol: str, ctx: Context) -> List[Sampli
         )
     ]
 
-    system_prompt = "You are a helpful financial assistant. Please summarize the stock position provided by the user in a concise and informative manner."
-    return await ctx.sample(messages, system_prompt=system_prompt)
+    system_prompt = "You are a helpful financial assistant. Please summarize the stock position provided by the user in a concise and informative manner. Include 1. Total number of shares\n2. Average purchase price\n3. Total investment value\n4. Acquisition date(s)\n5. Any relevant insights or recommendations based on the position details."
+    # ctx.sample may return a rich TextContent object (or a dict) depending
+    # on the MCP client implementation. The tool is declared to return a
+    # plain string, so extract the textual content here to satisfy FastMCP's
+    # output validation.
+    sampled = await ctx.sample(messages, system_prompt=system_prompt)
+
+    # If it's the TextContent dataclass or similar object, try to access `.text`
+    try:
+        text_val = getattr(sampled, "text", None)
+    except Exception:
+        text_val = None
+
+    if text_val is None:
+        # If it's a dict-like structure, pull the 'text' key
+        try:
+            if isinstance(sampled, dict):
+                text_val = sampled.get("text") or sampled.get("content")
+        except Exception:
+            text_val = None
+
+    # Fallback to stringifying the sampled value
+    if text_val is None:
+        text_val = str(sampled)
+
+    return text_val
 
 
 @mcp.tool()
@@ -96,6 +126,47 @@ def remove_stock_tool(stock_symbol: str) -> str:
 def get_greeting(name: str) -> str:
     """Get a personalized greeting"""
     return f"Hello, {name}! How can I assist you with your portfolio today?"
+
+
+@mcp.tool()
+def web_search_tool(query: str, num_results: Optional[int] = 5) -> str:
+    """
+    Perform a web search and return the results.
+    
+    Args:
+        query: The search query string
+        num_results: Number of results to return (default: 5)
+    """
+    base_url = "https://api.duckduckgo.com/"
+    params = {
+        'q': query,
+        'format': 'json',
+        'no_html': 1,
+        'skip_disambig': 1
+    }
+    
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        
+        results = []
+        # Add the abstract if available
+        if data.get('Abstract'):
+            results.append(f"Summary: {data['Abstract']}")
+            
+        # Add related topics
+        for topic in data.get('RelatedTopics', [])[:num_results]:
+            if isinstance(topic, dict) and 'Text' in topic:
+                results.append(f"- {topic['Text']}")
+                
+        if not results:
+            return "No results found for your query."
+            
+        return "\n".join(results)
+        
+    except Exception as e:
+        return f"Error performing web search: {str(e)}"
 
 
 if __name__ == "__main__":

@@ -31,12 +31,13 @@ uv add -r requirements.txt
 uv sync
 ```
 
-### Run MCP and Install to Claude
+### Run MCP and Install to Claude Desktop
 ```Shell
-#This installs MCP Server defined in main.py to Claude Config.
-uv run mcp install ./my-mcp-server/main.py
+# This installs MCP Server defined in main.py to Claude Config.
+# Client can be any of these claude-code, claude-desktop, cursor, gemini-cli, mcp-json
+uv run fastmcp install claude-desktop ./my-mcp-server/main.py
 or
-mcp install ./my-mcp-server/main.py
+fastmcp install claude-desktop ./my-mcp-server/main.py
 ```
 
 ### Debug MCP Server

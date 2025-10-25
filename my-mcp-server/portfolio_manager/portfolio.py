@@ -8,7 +8,8 @@ from typing import Dict, List, Optional
 # The portfolio data structure
 my_portfolio: Dict[str, List[dict]] = {
     "AAPL": [
-        {"shares": 10, "price_per_share": 150.0, "date_acquired": "2025-01-15"}
+        {"shares": 10, "price_per_share": 150.0, "date_acquired": "2025-01-15"},
+        {"shares": 10, "price_per_share": 250.0, "date_acquired": "2025-10-15"}
     ],
     "GOOGL": [
         {"shares": 5, "price_per_share": 2800.0, "date_acquired": "2025-02-20"}
